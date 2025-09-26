@@ -34,7 +34,8 @@ def add():
             "id": id,
             "author": name,
             "title": title,
-            "content": content
+            "content": content,
+            "likes": 0
         }
 
         blog_posts.append(new_post)
@@ -53,6 +54,7 @@ def delete(post_id):
     for post in blog_posts:
         if post['id'] == post_id:
             del blog_posts[blog_posts.index(post)]
+            break
 
     with open('data/blog.json', 'w') as file:
         json.dump(blog_posts, file)
@@ -78,16 +80,6 @@ def update(post_id):
         return "Post not found", 404
 
     if request.method == 'POST':
-        name = request.form['author']
-        content = request.form['content']
-        title = request.form['title']
-        new_post = {
-            "id": post_id,
-            "author": name,
-            "title": title,
-            "content": content
-        }
-
         with open('data/blog.json', 'r') as file:
             blog_posts = json.load(file)
 
@@ -95,11 +87,40 @@ def update(post_id):
             if post['id'] == post_id:
                 del blog_posts[blog_posts.index(post)]
 
+        name = request.form['author']
+        content = request.form['content']
+        title = request.form['title']
+        likes = post['likes']
+        new_post = {
+            "id": post_id,
+            "author": name,
+            "title": title,
+            "content": content,
+            "likes": likes
+        }
+
+
         blog_posts.append(new_post)
         with open('data/blog.json', 'w') as file:
             json.dump(blog_posts, file)
         return redirect(url_for('index'))
     return render_template('update.html', post=post)
+
+@app.route('/like/<int:post_id>', methods=['POST'])
+def like(post_id):
+    with open('data/blog.json', 'r') as file:
+        data = json.load(file)
+
+    for post in data:
+        if post['id'] == post_id:
+            post['likes'] += 1
+            break
+
+    with open('data/blog.json', 'w') as file:
+        json.dump(data, file)
+
+    return redirect(url_for('index'))
+
 
 
 if __name__ == '__main__':
