@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>Add a post!</h1>
+    <form action="/add" method="POST" class="space-y-6">
+        <div>
+            <label for="name"> Your name:</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                placeholder="Your name!">
+        </div>
+        <div>
+            <label for="title"> Your post title:</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                required
+                placeholder="Your title!">
+        </div>
+        <label for="content"> Your post:</label>
+            <input
+                type="text"
+                id="content"
+                name="content"
+                required
+                placeholder="Your post goes here!">
+        <div>
+        </div>
+        <button type="submit">Post!</button>
+    </form>
+{% endblock %}
