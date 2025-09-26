@@ -2,6 +2,19 @@
 
 {% block content %}
     <h1>Welcome to My Flask Blog!</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul id="flash-messages" style=" list-style: none; padding: 15px;
+                margin: 10px auto; max-width: 600px; text-align: center;
+                border-radius: 6px; opacity: 1; transition: opacity 1s ease-out;">
+              {% for category, message in messages %}
+                <li style=" font-size: 1.2em; font-weight: bold; color: #28a745; ">
+                    {{ message }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
     <a href="{{ url_for('add') }}" class="button-link">
         <button type="button">✍️ Add New Post</button> </a>
         {% for post in posts %}

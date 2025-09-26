@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import json
 
 app = Flask(__name__)
+app.secret_key = "not_so_secret"
 @app.route('/')
 def index():
 
@@ -41,7 +42,7 @@ def add():
         blog_posts.append(new_post)
         with open('data/blog.json', 'w') as file:
             json.dump(blog_posts, file)
-
+        flash("Post added successfully!")
         return redirect(url_for('index'))
 
     return render_template('add.html' )
@@ -58,7 +59,7 @@ def delete(post_id):
 
     with open('data/blog.json', 'w') as file:
         json.dump(blog_posts, file)
-
+    flash("Post deleted successfully!")
     return redirect(url_for('index'))
 
 
@@ -103,6 +104,8 @@ def update(post_id):
         blog_posts.append(new_post)
         with open('data/blog.json', 'w') as file:
             json.dump(blog_posts, file)
+
+        flash("Post updated successfully!")
         return redirect(url_for('index'))
     return render_template('update.html', post=post)
 
@@ -118,7 +121,7 @@ def like(post_id):
 
     with open('data/blog.json', 'w') as file:
         json.dump(data, file)
-
+    flash("Now that's a good post!")
     return redirect(url_for('index'))
 
 
