@@ -6,7 +6,7 @@ app.secret_key = "not_so_secret"
 @app.route('/')
 def index():
 
-    with open('data/blog.json', 'r') as file:
+    with open('data/blog.json', 'r', encoding='utf-8') as file:
         blog_posts = json.load(file)
 
     return render_template('index.html', posts=blog_posts)
@@ -17,11 +17,15 @@ def add():
         name = request.form['name']
         content = request.form['content']
         title = request.form['title']
-        with open('data/blog.json', 'r') as file:
+        with open('data/blog.json', 'r', encoding='utf-8') as file:
             blog_posts = json.load(file)
 
         #generartes unique ID
-        id = blog_posts[-1]['id'] + 1
+        if blog_posts:
+            id = blog_posts[-1]['id'] + 1
+        else:
+            id = 1
+
         all_id = []
         for post in blog_posts:
             all_id.append(post['id'])
@@ -40,8 +44,8 @@ def add():
         }
 
         blog_posts.append(new_post)
-        with open('data/blog.json', 'w') as file:
-            json.dump(blog_posts, file)
+        with open('data/blog.json', 'w', encoding='utf-8') as file:
+            json.dump(blog_posts, file, indent=4)
         flash("Post added successfully!")
         return redirect(url_for('index'))
 
@@ -49,7 +53,7 @@ def add():
 
 @app.route('/delete/<int:post_id>', methods = ['POST'])
 def delete(post_id):
-    with open('data/blog.json', 'r') as file:
+    with open('data/blog.json', 'r', encoding='utf-8') as file:
         blog_posts = json.load(file)
 
     for post in blog_posts:
@@ -57,8 +61,8 @@ def delete(post_id):
             del blog_posts[blog_posts.index(post)]
             break
 
-    with open('data/blog.json', 'w') as file:
-        json.dump(blog_posts, file)
+    with open('data/blog.json', 'w', encoding='utf-8') as file:
+        json.dump(blog_posts, file, indent=4)
     flash("Post deleted successfully!")
     return redirect(url_for('index'))
 
@@ -66,22 +70,22 @@ def delete(post_id):
 @app.route('/update/<int:post_id>', methods=['GET', 'POST'])
 def update(post_id):
     def fetch_post_by_id(id_of_post):
-        with open('data/blog.json', 'r') as file:
+        with open('data/blog.json', 'r', encoding='utf-8') as file:
             posts = json.load(file)
 
         for blog_post in posts:
             if blog_post['id'] == id_of_post:
                 return blog_post
-            else:
-                return None
+
         return None
 
     post = fetch_post_by_id(post_id)
     if post is None:
         return "Post not found", 404
 
+    likes = post['likes']
     if request.method == 'POST':
-        with open('data/blog.json', 'r') as file:
+        with open('data/blog.json', 'r', encoding='utf-8') as file:
             blog_posts = json.load(file)
 
         for post in blog_posts:
@@ -91,7 +95,6 @@ def update(post_id):
         name = request.form['author']
         content = request.form['content']
         title = request.form['title']
-        likes = post['likes']
         new_post = {
             "id": post_id,
             "author": name,
@@ -102,8 +105,8 @@ def update(post_id):
 
 
         blog_posts.append(new_post)
-        with open('data/blog.json', 'w') as file:
-            json.dump(blog_posts, file)
+        with open('data/blog.json', 'w', encoding='utf-8') as file:
+            json.dump(blog_posts, file, indent=4)
 
         flash("Post updated successfully!")
         return redirect(url_for('index'))
@@ -111,7 +114,7 @@ def update(post_id):
 
 @app.route('/like/<int:post_id>', methods=['POST'])
 def like(post_id):
-    with open('data/blog.json', 'r') as file:
+    with open('data/blog.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     for post in data:
@@ -119,8 +122,8 @@ def like(post_id):
             post['likes'] += 1
             break
 
-    with open('data/blog.json', 'w') as file:
-        json.dump(data, file)
+    with open('data/blog.json', 'w', encoding='utf-8') as file:
+        json.dump(data, file, indent=4)
     flash("Now that's a good post!")
     return redirect(url_for('index'))
 
